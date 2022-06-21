@@ -26,12 +26,11 @@ import {
     onClose: any;
   };
   
-  export default function IgnotModal({ isOpen, onClose }: Props) {
+  export default function TopUpModal({ isOpen, onClose }: Props) {
     const { account, deactivate } = useEthers();
-    const [inputWeight, setInputWeight] = useState("");
-    const [inputCert, setInputCert] = useState("");
+    const [input, setInputPrice] = useState("");
     const [inputDesc, setInputDesc] = useState("");
-    const { state, send: addNewIgnot } = useContractMethod("newIgnot");
+    const { state, send: TopUpBalance } = useContractMethod("replenish_the_balance");
     function handleDeactivateAccount() {
         
       deactivate();
@@ -40,27 +39,24 @@ import {
 
 
     function handleInputPrice(valueAsString: string, valueAsNumber: number) {
-        setInputWeight(valueAsString);
+        setInputPrice(valueAsString);
       }
 
     function handleCloseWindow() {
         setInputDesc("");
-        setInputWeight("");
-        setInputCert("");
+        setInputPrice("");
         onClose(false);
     }
 
-    function handleAddNewIgnot()
+    function handleToUpBalance()
     {
-        //const _price = parse(inputWeight);
-        const _desc = inputDesc;
-        const _cert=inputCert;
-        if (inputWeight) {
-            addNewIgnot(inputWeight,_cert,_desc);
+        const _input = parseInt(input);
+      
+        if (input) {
+            TopUpBalance(input);
             onClose(false);
             setInputDesc("");
-            setInputWeight("");
-            setInputCert("");
+            setInputPrice("");
 
     }
     }
@@ -75,7 +71,7 @@ import {
         borderRadius="3xl"
       >
         <ModalHeader color="white" px={4} fontSize="lg" fontWeight="medium">
-          Add gold bar
+          Top up balance
         </ModalHeader>
         <ModalCloseButton
           color="white"
@@ -96,9 +92,6 @@ import {
             mb={3}
           >
             <Flex justifyContent="space-between" alignItems="center" mb={3}>
-              <Text color="gray.400" fontSize="sm">
-                Input info about bar
-              </Text>
               
             </Flex>
             <Flex alignItems="center" mt={2} mb={4} lineHeight={1}>
@@ -112,44 +105,34 @@ import {
               >
             <Flex justifyContent="space-between" alignItems="center" mb={3}>
               <Text color="gray.400" fontSize="sm">
-                Input weight of your gold bar: 
+              Input the desired amount: 
               </Text>
               
             </Flex>      
             <NumberInput
                 mb={2}
                 //min={1}
-                value={inputWeight}
+                value={input}
                 onChange={handleInputPrice}
                 color="white"
                 clampValueOnBlur={false}
                 >
                 <NumberInputField />
             </NumberInput>
+
             <Flex justifyContent="space-between" alignItems="center" mb={3}>
-              <Text color="gray.400" fontSize="sm">
-                  Input number certificate of your gold bar:
-                </Text>   
-              </Flex>
-              <Flex justifyContent="space-between" alignItems="center" mb={3}>
-            <Input value={inputCert} onChange={e => {setInputCert(e.target.value)}} type="text"/>
-            </Flex>
-            <Flex justifyContent="space-between" alignItems="center" mb={3}>
-              <Text color="gray.400" fontSize="sm">
-                Input description of your gold bar:
-              </Text>
+              
               
             </Flex>      
-            <Input value={inputDesc} onChange={e => {setInputDesc(e.target.value)}} type="text"/>
-
+    
+                
+            
+            
               </Text>
             </Flex>
-
-            
-            
             <Flex justifyContent="space-between" alignItems="center" mb={3}  marginLeft="100px">
-            <Button colorScheme="teal" size="lg" onClick={handleAddNewIgnot}  >
-                Add
+            <Button colorScheme="teal" size="lg" onClick={handleToUpBalance}  >
+                Top Up
             </Button>
             </Flex>
           </Box>

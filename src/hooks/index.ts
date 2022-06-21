@@ -15,7 +15,7 @@ export function useAdmStatus(ownerAddress: string) {
       method: "isAdmin",
       args: [ownerAddress],
     }) ?? [];
-  console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"+status+"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+  console.log(status);
   return status;
 }
 
@@ -27,7 +27,20 @@ export function useRegStatus(ownerAddress: string) {
       method: "isMember",
       args: [ownerAddress],
     }) ?? [];
-  console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"+status+"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+  console.log(status);
+  return status;
+}
+
+
+export function useBalance(ownerAddress: string) {
+  const [status] =
+    useContractCall( ownerAddress && {
+      abi: simpleContractInterface,
+      address: simpleContractAddress,
+      method: "get_balance",
+      args: [ownerAddress],
+    }) ?? [];
+  console.log(status);
   return status;
 }
 

@@ -12,6 +12,25 @@
 		"constant": true,
 		"inputs": [
 			{
+				"name": "_ignotNumberID",
+				"type": "uint256"
+			}
+		],
+		"name": "getIgnotCertificateById",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
 				"name": "_member",
 				"type": "address"
 			}
@@ -29,12 +48,20 @@
 						"type": "address"
 					},
 					{
+						"name": "weight",
+						"type": "uint256"
+					},
+					{
 						"name": "price",
 						"type": "uint256"
 					},
 					{
 						"name": "status",
 						"type": "uint8"
+					},
+					{
+						"name": "certificate",
+						"type": "string"
 					},
 					{
 						"name": "description",
@@ -64,6 +91,20 @@
 		"type": "function"
 	},
 	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_ignotNumberID",
+				"type": "uint256"
+			}
+		],
+		"name": "BuyIgnot",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"constant": true,
 		"inputs": [
 			{
@@ -79,6 +120,10 @@
 			},
 			{
 				"name": "count_ignots",
+				"type": "uint256"
+			},
+			{
+				"name": "balance",
 				"type": "uint256"
 			}
 		],
@@ -123,6 +168,25 @@
 		"constant": true,
 		"inputs": [
 			{
+				"name": "_member",
+				"type": "address"
+			}
+		],
+		"name": "get_balance",
+		"outputs": [
+			{
+				"name": "balance",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
 				"name": "_targetMember",
 				"type": "address"
 			}
@@ -142,8 +206,12 @@
 		"constant": false,
 		"inputs": [
 			{
-				"name": "_weiAmount",
+				"name": "_weight",
 				"type": "uint256"
+			},
+			{
+				"name": "_certificate",
+				"type": "string"
 			},
 			{
 				"name": "_description",
@@ -204,7 +272,15 @@
 			},
 			{
 				"name": "",
+				"type": "uint256"
+			},
+			{
+				"name": "",
 				"type": "uint8"
+			},
+			{
+				"name": "",
+				"type": "string"
 			},
 			{
 				"name": "",
@@ -279,6 +355,10 @@
 			{
 				"name": "count_ignots",
 				"type": "uint256"
+			},
+			{
+				"name": "balance",
+				"type": "uint256"
 			}
 		],
 		"payable": false,
@@ -315,12 +395,20 @@
 						"type": "address"
 					},
 					{
+						"name": "weight",
+						"type": "uint256"
+					},
+					{
 						"name": "price",
 						"type": "uint256"
 					},
 					{
 						"name": "status",
 						"type": "uint8"
+					},
+					{
+						"name": "certificate",
+						"type": "string"
 					},
 					{
 						"name": "description",
@@ -366,6 +454,25 @@
 				"type": "uint256"
 			}
 		],
+		"name": "getIgnotWeightById",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_ignotNumberID",
+				"type": "uint256"
+			}
+		],
 		"name": "getIgnotOwnerById",
 		"outputs": [
 			{
@@ -397,24 +504,6 @@
 		"type": "function"
 	},
 	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_sum",
-				"type": "uint256"
-			},
-			{
-				"name": "_ignotNumberID",
-				"type": "uint256"
-			}
-		],
-		"name": "updatePriceById",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"constant": true,
 		"inputs": [
 			{
@@ -435,12 +524,20 @@
 						"type": "address"
 					},
 					{
+						"name": "weight",
+						"type": "uint256"
+					},
+					{
 						"name": "price",
 						"type": "uint256"
 					},
 					{
 						"name": "status",
 						"type": "uint8"
+					},
+					{
+						"name": "certificate",
+						"type": "string"
 					},
 					{
 						"name": "description",
@@ -474,6 +571,10 @@
 				"type": "address"
 			},
 			{
+				"name": "weight",
+				"type": "uint256"
+			},
+			{
 				"name": "price",
 				"type": "uint256"
 			},
@@ -482,30 +583,16 @@
 				"type": "uint8"
 			},
 			{
+				"name": "certificate",
+				"type": "string"
+			},
+			{
 				"name": "description",
 				"type": "string"
 			}
 		],
 		"payable": false,
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_ignotNumberID",
-				"type": "uint256"
-			},
-			{
-				"name": "_price",
-				"type": "uint256"
-			}
-		],
-		"name": "BuyIgnot",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -540,6 +627,20 @@
 			}
 		],
 		"name": "ChangeOwnerById",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "replenish_the_balance",
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",

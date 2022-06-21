@@ -20,13 +20,17 @@ contract SellGold {
     struct Member{
         address  member;
         uint count_ignots;
+        uint balance;
     }
     struct Ignot{
         uint number;
-        address payable owner;
+        address owner;
+        uint weight;
         uint price;
         SellingStatus status;
+        string certificate;
         string description;
+
     }
 
     modifier onlyMembers {
@@ -56,36 +60,25 @@ contract SellGold {
         return ( memberId[msg.sender] != 0 );
     }
 
-
-
-    /* function addMember( address _targetMember ) public {
-        if ( !isMember(_targetMember) ) {
-           uint id;
-           memberId[_targetMember] = members.length;
-           id = members.length++;
-           numMembers = members.length - 1;
-           members[id].member = _targetMember;
-        }
-    } */
+    
 
     function addMember(  ) public {
-        if ( !isMember(msg.sender) ) {
-           uint id;
-           memberId[msg.sender] = members.length;
-           id = members.length++;
-           numMembers = members.length - 1;
-           members[id].member=msg.sender;
-        }
+        require ( !isMember(msg.sender) );
+        uint id;
+        memberId[msg.sender] = members.length;
+        id = members.length++;
+        numMembers = members.length - 1;
+        members[id].member=msg.sender;
+        
     }
 
     function addAdmin(  ) public {
-        if ( !isAdmin(msg.sender) ) {
-           uint id;
-           adminId[msg.sender] = admins.length;
-           id = admins.length++;
-           numAdmins = admins.length - 1;
-           admins[id].member =msg.sender;
-        }
+        require ( !isAdmin(msg.sender));
+        uint id;
+        adminId[msg.sender] = admins.length;
+        id = admins.length++;
+        numAdmins = admins.length - 1;
+        admins[id].member =msg.sender;
     }
 
     function addIgnotCount(address _member) internal 
@@ -109,27 +102,75 @@ contract SellGold {
             if(members[i].member==_member)
             {
                 members[i].count_ignots--;
-
                 break;
             }
         }
     }
 
+    function increase_bal(address _member, uint amount) internal {
+        for (uint i=0;i<members.length;i++)
+        {
+            if(members[i].member==_member)
+            {
+                members[i].balance+=amount;
+                break;
+            }
+        }
+    }
+
+    function decrease_bal(address _member, uint amount) internal {
+        for (uint i=0;i<members.length;i++)
+        {
+            if(members[i].member==_member)
+            {
+                members[i].balance-=amount;
+                break;
+            }
+        }
+    }
+
+    function replenish_the_balance(uint amount) public onlyMembers {
+       for (uint i=0;i<members.length;i++)
+        {
+            if(members[i].member==msg.sender)
+            {
+                members[i].balance+=amount;
+                break;
+            }
+        } 
+    }
+
+    function get_balance(address _member) public view
+    returns (uint balance)
+    {
+        uint res=0;
+        for (uint i=0;i<members.length;i++)
+        {
+            if(members[i].member==_member)
+            {
+                res=members[i].balance;
+                break;
+            }
+        }
+        return res;
+    }
 
     function newIgnot(
-        uint _weiAmount,
+        uint _weight, 
+        string memory _certificate,
         string memory _description
     ) public
         onlyAdmins
         returns (uint ignotID)
     {
-        require( _weiAmount <= (400 ether) );    
-        //require( _weiAmount <= (msg.sender.balance) ); 
+        require( _weight <= (13000) );    
         ignotID = ignots.length++;
         Ignot storage i = ignots[ignotID];
         i.number=ignotID;
         i.owner=msg.sender;
-        i.price=_weiAmount;
+        i.weight=_weight;
+        i.price=_weight*59;
+        i.certificate=_certificate;
         i.description=_description;
         i.status=SellingStatus.Released;
         numIgnots=ignotID+1;
@@ -143,15 +184,19 @@ contract SellGold {
                   uint,
                   address,
                   uint,
+                  uint,
                   SellingStatus,
+                  string memory,
                   string memory
                 ) {
         Ignot memory ignot = ignots[_ignotNumberID];
         return ( 
                  ignot.number,
                  ignot.owner,
+                 ignot.weight,
                  ignot.price,
                  ignot.status,
+                 ignot.certificate,
                  ignot.description );
     }
 
@@ -169,6 +214,20 @@ contract SellGold {
         return ( ignot.price);
     }
 
+    function getIgnotCertificateById (uint _ignotNumberID) public view
+        returns (string memory) 
+    {
+        Ignot memory ignot = ignots[_ignotNumberID];
+        return ( ignot.certificate);
+    }
+
+    function getIgnotWeightById (uint _ignotNumberID) public view
+        returns (uint) 
+    {
+        Ignot memory ignot = ignots[_ignotNumberID];
+        return ( ignot.weight);
+    }
+
     function getStatus(SellingStatus _status) internal view returns (string memory) 
     {
         if (SellingStatus.Close == _status) return "Close";
@@ -183,64 +242,52 @@ contract SellGold {
         return getStatus(ignot.status);
     }
 
-    function updatePriceById(uint _sum, uint _ignotNumberID) public
-    {
-        Ignot storage ignot = ignots[_ignotNumberID];
-        if(ignot.owner==msg.sender)
-        {    
-            ignot.price += _sum;
-        }
-    }
 
     function OnSaleById(uint _ignotNumberID) public 
     {
         Ignot storage ignot = ignots[_ignotNumberID];
-        if (ignot.owner==msg.sender&&(ignot.status==SellingStatus.Close||ignot.status==SellingStatus.Released))
-        {
-            ignot.status = SellingStatus.OnSale;
-            emit LogNewAlert("Your part of gold is for sale");
-        }
+        require (ignot.owner==msg.sender&&(ignot.status==SellingStatus.Close||ignot.status==SellingStatus.Released));
+        ignot.status = SellingStatus.OnSale;
+        emit LogNewAlert("Your part of gold is for sale");
+        
     }
 
     function OnCloseById(uint _ignotNumberID) public 
     {
         Ignot storage ignot = ignots[_ignotNumberID];
-        if (ignot.owner==msg.sender&&(ignot.status==SellingStatus.OnSale||ignot.status==SellingStatus.Released))
-        {
-            ignot.status = SellingStatus.Close;
-            emit LogNewAlert("Your part of gold is closed for sale");
-        }
+        require (ignot.owner==msg.sender&&(ignot.status==SellingStatus.OnSale||ignot.status==SellingStatus.Released));
+        ignot.status = SellingStatus.Close;
+        emit LogNewAlert("Your part of gold is closed for sale");
+        
     }
 
-    function ChangeOwnerById(uint _ignotNumberID, address payable _newowner) public 
+    function ChangeOwnerById(uint _ignotNumberID, address _newowner) public 
     {
         Ignot storage ignot = ignots[_ignotNumberID];
-        if (isMember(_newowner))
-        {
-            if (ignot.owner==msg.sender&&(ignot.status==SellingStatus.OnSale||ignot.status==SellingStatus.Released))
-            {
-                addIgnotCount(_newowner);
-                minusIgnotCount(msg.sender);
-                ignot.status = SellingStatus.Close;
-                ignot.owner=_newowner;
-                emit LogNewAlert("Your part of gold change owner");
-            }
-        }
+        require (isMember(_newowner));
+        require (ignot.owner==msg.sender&&(ignot.status==SellingStatus.OnSale||ignot.status==SellingStatus.Released));
+        addIgnotCount(_newowner);
+        minusIgnotCount(msg.sender);
+        ignot.status = SellingStatus.Close;
+        ignot.owner=_newowner;
+        emit LogNewAlert("Your part of gold change owner");
+        
     }
 
-    function BuyIgnot(uint _ignotNumberID, uint _price) public onlyMembers
+    function BuyIgnot(uint _ignotNumberID) public onlyMembers
     {
         Ignot storage ignot = ignots[_ignotNumberID];
-        if (ignot.owner!=msg.sender&&ignot.status==SellingStatus.OnSale && ignot.price<=_price)
-        {
-    
-            addIgnotCount(msg.sender);
-            minusIgnotCount(ignot.owner);
-            ignot.status = SellingStatus.Close;
-            ignot.owner=msg.sender;
-            ignot.price=_price;
-            emit LogNewAlert("You buy part of gold");
-        }
+        uint _memberID=memberId[msg.sender];
+        
+        require (ignot.owner!=msg.sender&&ignot.status==SellingStatus.OnSale&&members[_memberID].balance>=ignot.price);
+        addIgnotCount(msg.sender);
+        minusIgnotCount(ignot.owner);
+        increase_bal(ignot.owner, ignot.price);
+        decrease_bal(msg.sender, ignot.price);
+        ignot.status = SellingStatus.Close;
+        ignot.owner=msg.sender;
+        emit LogNewAlert("You buy part of gold");
+        
     }
 
   
@@ -276,11 +323,6 @@ contract SellGold {
 
         }
 
-        /* for(uint i=0;i<count_ignots;i++)
-        {
-            getIgnotbyID(res[i].number);
-        } */
-
         return res;
     }
 
@@ -299,12 +341,6 @@ contract SellGold {
             }
 
         }
-
-        /* for(uint i=0;i<count_ignots;i++)
-        {
-            getIgnotbyID(res[i].number);
-        } */
-
         return res;
     }
 
@@ -325,6 +361,4 @@ contract SellGold {
         }
         return res;
     }
-
-   
 }

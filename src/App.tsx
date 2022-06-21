@@ -8,6 +8,7 @@ import BuyBlockModal from "./components/BuyBlockModal";
 import MyIgnotsModal from "./components/MyIgnotsModal";
 import BuyIgnotModal from "./components/BuyIgnotModal";
 import Registration from "./components/Registration";
+import TopUpModal from "./components/TopUpModal";
 import "@fontsource/inter";
 import { useState } from "react";
 import { useEthers, useEtherBalance } from "@usedapp/core";
@@ -15,6 +16,7 @@ import { useEthers, useEtherBalance } from "@usedapp/core";
 function App() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isVisible, setIsVisible] = useState(false);
+  const [isVisTopUp, setIsVisTopUp] = useState(false);
   const [myGB, setMyGB] = useState("Privets");
   const [isVisibleMyGB, setIsVisibleMyGB] = useState(false);
   const [number, setNumber] = useState(0);
@@ -38,10 +40,12 @@ function App() {
         
             ? <Registration account={account} handleOpenModal={isVisible} setHandleOpenModal={setIsVisible} 
             handleOpenModalMyGB={isVisibleMyGB} setHandleOpenModalMyGB={setIsVisibleMyGB} MyGB={myGB} setHandlerMyGB={setMyGB} handleOpenModalBuyGB={setIsVisibleBuyGB}
+            handleOpenModalToUp={setIsVisTopUp}
            />
             :null
         }
         <IgnotModal isOpen={isVisible} onClose={setIsVisible} />
+        <TopUpModal isOpen={isVisTopUp} onClose={setIsVisTopUp} />
         <MyIgnotsModal isOpen={isVisibleMyGB} onClose={setIsVisibleMyGB} MyGB={myGB} />
         <BuyIgnotModal isOpen={isVisibleBuyGB} onClose={setIsVisibleBuyGB} MyGB={myGB} HandlerOpenBuyWindow={setIsVisibleBuyBlock} 
         HandlerSetNumberIgnot={setNumber} HandlerSetPriceIgnot={setPrice} HandlerSetAddressIgnot={setAddress} HandlerSetStatusIgnot={setStatus}/> 

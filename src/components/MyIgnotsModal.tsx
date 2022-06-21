@@ -36,14 +36,16 @@ import {
     const { state: setStatusClose, send: CloseStatus } = useContractMethod("OnCloseById");
     var arrObjects = [];
     var k=0;
-    for(var i=0;i<splitted.length;i+=5)
+    for(var i=0;i<splitted.length;i+=7)
     {
         arrObjects[k]={
             number: splitted[i],
             address: splitted[i+1],
-            price: splitted[i+2],
-            status: getStatusName(splitted[i+3]),
-            desc: splitted[i+4]
+            weight: splitted[i+2],
+            price: splitted[i+3],
+            status: getStatusName(splitted[i+4]),
+            cert: splitted[i+5],
+            desc: splitted[i+6]
              }
         k++;
     }
@@ -56,7 +58,10 @@ import {
     function handleOnSaleStatus(_number: Number) {
        
         const __number = parseInt(_number.toString());
-        OnSaleStatus(__number);
+        if(__number>=0){
+          OnSaleStatus(__number);
+          onClose(false);
+        }
 
     }
     
@@ -64,7 +69,10 @@ import {
     function handleCloseStatus(_number: Number) {
        
         const __number = parseInt(_number.toString());
-        CloseStatus(_number);
+        if(_number>=0){
+          CloseStatus(_number);
+          onClose(false);
+        }
     }
 
     function getStatusName(_status:Number)
@@ -78,6 +86,7 @@ import {
 
 
  const listItems = arrObjects.map((item)=> {
+   if(item.number!='')
      return ( <ListItem>
          <Box
             borderRadius="3xl"
@@ -95,15 +104,21 @@ import {
             </Text>
             <Text color="gray.400" fontSize="sm">
             
-                {item.number}
+                {item.number} 
             </Text>
-              
+            
+            <Text color="gray.400" fontSize="sm">
+              <b>Weight:</b>
+            </Text>
+            <Text color="gray.400" fontSize="sm">
+                {item.weight} grams
+            </Text>
 
             <Text color="gray.400" fontSize="sm">
               <b>Coast:</b>
             </Text>
             <Text color="gray.400" fontSize="sm">
-                {item.price} ether
+                {item.price} USD
             </Text>
 
             <Text color="gray.400" fontSize="sm">
@@ -112,6 +127,14 @@ import {
             <Text color="gray.400" fontSize="sm">
                 {item.status}
             </Text>
+
+            <Text color="gray.400" fontSize="sm">
+                <b> Certificate:</b>
+                </Text>
+                <Text color="gray.400" fontSize="sm">
+                    {item.cert}
+                </Text>
+
             <Text color="gray.400" fontSize="sm">
              <b> Desctiption:</b>
             </Text>
@@ -138,10 +161,18 @@ import {
      </ListItem>
          
      )
+     else
+     {return (
+       <Text color="gray.400" fontSize="16px">
+       <b>You don't have any bars yet, go to "Buy gold bar"</b>
+     </Text>)
+     }
+
+     
  })
 
   return (
-    <Modal isOpen={isOpen} onClose={handleCloseWindow} isCentered size="md">
+    <Modal isOpen={isOpen} onClose={handleCloseWindow} size="md">
       <ModalOverlay />
       <ModalContent
         background="gray.900"

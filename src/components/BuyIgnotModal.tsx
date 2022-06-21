@@ -39,14 +39,16 @@ import {
     var splitted = MyGB.toString().split(',');
     var arrObjects = [];
     var k=0;
-    for(var i=0;i<splitted.length;i+=5)
+    for(var i=0;i<splitted.length;i+=7)
     {
         arrObjects[k]={
-            number: splitted[i],
-            address: splitted[i+1],
-            price: splitted[i+2],
-            status: getStatusName(splitted[i+3]),
-            desc: splitted[i+4]
+          number: splitted[i],
+          address: splitted[i+1],
+          weight: splitted[i+2],
+          price: splitted[i+3],
+          status: getStatusName(splitted[i+4]),
+          cert: splitted[i+5],
+          desc: splitted[i+6]
              }
         k++;
     }
@@ -72,65 +74,87 @@ import {
         HandlerSetAddressIgnot(_address);
         HandlerSetStatusIgnot(_status.toString())
     }
+    
+    const listItems = arrObjects.map((item)=> {
+      if(item.number!='')
+        return ( <ListItem>
+            <Box
+                borderRadius="3xl"
+                border="1px"
+                borderStyle="solid"
+                borderColor="gray.600"
+                px={5}
+                pt={4}
+                pb={2}
+                mb={3}
+              >
 
- const listItems = arrObjects.map((item)=> {
-     return ( <ListItem>
-         <Box
-            borderRadius="3xl"
-            border="1px"
-            borderStyle="solid"
-            borderColor="gray.600"
-            px={5}
-            pt={4}
-            pb={2}
-            mb={3}
-          >
+                <Text color="gray.400" fontSize="sm">
+                  <b>Number:</b>
+                </Text>
+                <Text color="gray.400" fontSize="sm">
+                  
+                    {item.number}
+                </Text>
 
-            <Text color="gray.400" fontSize="sm">
-              <b>Number:</b>
-            </Text>
-            <Text color="gray.400" fontSize="sm">
+                <Text color="gray.400" fontSize="sm">
+                  <b>Weight:</b>
+                </Text>
+                <Text color="gray.400" fontSize="sm">
+                    {item.weight} grams
+                </Text>  
+
+                <Text color="gray.400" fontSize="sm">
+                  <b>Coast:</b>
+                </Text>
+                <Text color="gray.400" fontSize="sm">
+                    {item.price} USD
+                </Text>
+
+                <Text color="gray.400" fontSize="sm">
+                <b>Status:</b> 
+                </Text>
+                <Text color="gray.400" fontSize="sm">
+                    {item.status}
+                </Text>
+
+                <Text color="gray.400" fontSize="sm">
+                <b> Certificate:</b>
+                </Text>
+                <Text color="gray.400" fontSize="sm">
+                    {item.cert}
+                </Text>
+
+                <Text color="gray.400" fontSize="sm">
+                <b> Desctiption:</b>
+                </Text>
+                <Text color="gray.400" fontSize="sm">
+                    {item.desc}
+                </Text>
+
+                <Flex justifyContent="space-between" alignItems="center" mb={3} >
+                { item.number!=""?
+                <Button colorScheme="teal" size="lg" marginTop="20px" disabled={item.status=="On Sale"?false:true} onClick={()=>handlerBuyBar(item.number, item.price, item.address, item.status)}  >
+                    Buy
+                </Button>
+                : null
+                }
+                </Flex>
+                </Box>
+        </ListItem>
             
-                {item.number}
-            </Text>
-              
-
-            <Text color="gray.400" fontSize="sm">
-              <b>Coast:</b>
-            </Text>
-            <Text color="gray.400" fontSize="sm">
-                {item.price} ether
-            </Text>
-
-            <Text color="gray.400" fontSize="sm">
-             <b>Status:</b> 
-            </Text>
-            <Text color="gray.400" fontSize="sm">
-                {item.status}
-            </Text>
-            <Text color="gray.400" fontSize="sm">
-             <b> Desctiption:</b>
-            </Text>
-            <Text color="gray.400" fontSize="sm">
-                {item.desc}
-            </Text>
-
-            <Flex justifyContent="space-between" alignItems="center" mb={3} >
-            { item.number!=""?
-            <Button colorScheme="teal" size="lg" marginTop="20px" disabled={item.status=="On Sale"?false:true} onClick={()=>handlerBuyBar(item.number, item.price, item.address, item.status)}  >
-                Buy
-            </Button>
-            : null
-            }
-            </Flex>
-            </Box>
-     </ListItem>
-         
-     )
- })
+        )
+    else
+    {return (
+      <Text color="gray.400" fontSize="20px">
+      <b>No bars available for purchase!</b>
+    </Text>)
+    }
+    })
+  
 
   return (
-    <Modal isOpen={isOpen} onClose={handleCloseWindow} isCentered size="md">
+    <Modal isOpen={isOpen} onClose={handleCloseWindow}  size="md">
       <ModalOverlay />
       <ModalContent
         background="gray.900"

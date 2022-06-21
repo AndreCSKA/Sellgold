@@ -57,38 +57,15 @@ import {
     }
     
 
-    const startPayment = async ({ether, addr }:Props1) => {
-        
-         var flag=false;
-          if (!window.ethereum)
-            throw new Error("No crypto wallet found. Please install it.");
-      
-          await window.ethereum.send("eth_requestAccounts");
-          const provider = new ethers.providers.Web3Provider(window.ethereum);
-          const signer = provider.getSigner();
-          ethers.utils.getAddress(addr);
-          const tx = await signer.sendTransaction({
-            to: addr,
-            value: ethers.utils.parseEther(ether)
-          });
-          flag=true;
-          console.log({ ether, addr });
-          console.log("tx", tx);
-
-          return flag;
-      };
 
     async function handleBuyIgnot ()
     {
        // const _price = parseInt(inputPrice);
         const _number = parseInt(numberBlock);
 
-        const perem=await startPayment({
-            ether: priceBlock,
-            addr: addressBlock
-          });
-        if (inputPrice&&perem) {
-            BuyIgnot(_number, inputPrice);
+
+        if (_number>=0) {
+            BuyIgnot(_number);
             onClose(false);
             setInputPrice("");
         }
@@ -135,21 +112,12 @@ import {
                 lineHeight="1.1"
               >
             <Flex justifyContent="space-between" alignItems="center" mb={3}>
-              <Text color="gray.400" fontSize="sm">
-                Input price more or  current price:
+              <Text color="gray.400" fontSize="16px" verticalAlign={'middle'} >
+              Сlick the button below to confirm your purchase
               </Text>
               
             </Flex>      
-            <NumberInput
-                mb={2}
-                //min={1}
-                value={inputPrice}
-                onChange={handleInputPrice}
-                color="white"
-                clampValueOnBlur={false}
-                >
-                <NumberInputField />
-            </NumberInput>
+  
 
               </Text>
             </Flex>
